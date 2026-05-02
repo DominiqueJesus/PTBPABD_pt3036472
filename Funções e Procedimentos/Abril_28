@@ -1,0 +1,63 @@
+ /*Questão 01. Crie um procedimento chamado student_grade_points segundo os critérios abaixo:
+
+a. Utilize como parâmetro de entrada o conceito. Exemplo: A+, A-, ...
+
+b. Retorne os atributos das tuplas: Nome do estudante, Departamento do estudante, Título do curso, Departamento do curso,
+ Semestre do curso, Ano do curso, Pontuação alfanumérica, Pontuação numérica.
+
+c. Filtre as tuplas utilizando o parâmetro de entrada.*/
+ 
+-- Criação do procedure
+CREATE PROCEDURE Student_PT3036472.student_grade_points @conceito VARCHAR(2)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	SELECT s.name, s.dept_name, c.title, c.dept_name, tk.semester, tk.year, gp.grade, gp.points
+		FROM Student_PT3036472.student s
+		JOIN Student_PT3036472.takes tk
+		ON s.ID = tk.ID
+		JOIN Student_PT3036472.grade_points gp
+		ON tk.grade = gp.grade
+		LEFT JOIN Student_PT3036472.section sec
+		ON tk.course_id = sec.course_id
+		AND tk.sec_id = sec.sec_id
+		AND tk.semester = sec.semester
+		AND tk.year = sec.year
+		LEFT JOIN Student_PT3036472.course c
+		ON sec.course_id = c.course_id
+		WHERE gp.grade = @conceito;
+END
+
+-- Exemplo de uso
+EXEC Student_PT3036472.student_grade_points 'A';
+
+
+/* Questão 02.
+
+Crie uma função chamada return_instructor_location segundo os critérios abaixo:
+
+a. Utilize como parâmetro de entrada o nome do instrutor.
+
+b. Retorne os atributos das tuplas: Nome do instrutor, Curso ministrado, Semestre do curso, 
+Ano do curso, prédio e número da sala na qual o curso foi ministrado
+
+c. Exemplo: SELECT * FROM dbo.return_instructor_location('Gustafsson'); */
+
+-- Criação da função
+CREATE FUNCTION Student_PT3036472.return_instructor_location(@instructor_name VARCHAR(20))
+RETURNS TABLE 
+AS
+RETURN (SELECT i.name, t.course_id, t.semester, t.year, sec.building, sec.room_number
+		FROM Student_PT3036472.instructor i 
+		LEFT JOIN Student_PT3036472.teaches t
+		ON i.ID = t.ID
+		LEFT JOIN Student_PT3036472.section sec
+		ON t.course_id = sec.course_id
+		AND t.sec_id = sec.sec_id   
+        AND t.semester = sec.semester 
+        AND t.year = sec.year
+		WHERE i.name = @instructor_name);
+
+-- Exemplo de uso
+SELECT * FROM Student_PT3036472.return_instructor_location('Gustafsson');
