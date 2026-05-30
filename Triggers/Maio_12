@@ -30,12 +30,12 @@ SELECT * FROM Student_PT3036472.takes tk WHERE tk.ID = '30299' ORDER BY tk.cours
 -- Seção a ser deletada: 1 e 2
 SELECT * FROM Student_PT3036472.section sec WHERE sec.course_id = '169';
 
--- Curso a ser deletado: 169
+-- Curso a ser deletado: 169 (3 pontos)
 SELECT * FROM Student_PT3036472.course c WHERE c.course_id = '169' ORDER BY c.course_id;
 
 -- Total de pontos (tot_credit)
 -- Antes do trigger: 38
--- Depois do trigger: 
+-- Depois do trigger: 35
 SELECT * FROM Student_PT3036472.student st WHERE st.ID = '30299';
 
 -- Processo de DELETE de curso da lista do aluno (ativa trigger lost_credits)
